@@ -18,7 +18,6 @@ export default function ProductDetail({ product }: { product: Product }) {
       </div>
 
       <div className="p-8">
-        {/* Status Badge */}
         <div className="mb-6 flex items-center justify-center">
           {isOke ? (
             <div className="flex items-center gap-3 px-6 py-3 bg-green-50 rounded-full border-2 border-green-200">
@@ -37,33 +36,25 @@ export default function ProductDetail({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Product Information Grid */}
         <div className="space-y-4">
-          {/* NO */}
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
             <span className="font-semibold text-slate-700">NO</span>
             <span className="text-lg font-bold text-slate-900">
               {product.id}
             </span>
           </div>
-
-          {/* Nama Produk */}
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
             <span className="font-semibold text-slate-700">Nama Produk</span>
             <span className="text-lg font-bold text-slate-900">
               {product.namaProdul}
             </span>
           </div>
-
-          {/* Berat */}
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
             <span className="font-semibold text-slate-700">Berat (kg)</span>
             <span className="text-lg font-bold text-slate-900">
               {product.berat}
             </span>
           </div>
-
-          {/* Status */}
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
             <span className="font-semibold text-slate-700">Status</span>
             <span

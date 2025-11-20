@@ -1,8 +1,13 @@
+"use client";
+
 import { CardChart } from "@/components/card-chard";
+import { Button } from "@/components/ui/button";
 import { operators } from "@/data/operators";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function PageSoalSatu() {
+  const [status, setStatus] = useState("");
   const sortedOperators = operators
     .map((op) => ({
       ...op,
@@ -27,13 +32,41 @@ export default function PageSoalSatu() {
   function formatNumber(num: number): string {
     return num.toLocaleString("id-ID");
   }
+
+  const handleSendEmail = async (name: string) => {
+    setStatus("Mengirim...");
+
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (response.ok) {
+        setStatus("Pesan berhasil dikirim!");
+        alert("Pesan berhasil dikirim ke email rezadev2498@gmail.com");
+      } else {
+        const errorData = await response.json();
+        console.error(errorData);
+        setStatus(
+          `Gagal mengirim pesan: ${errorData.message || "Unknown error"}`
+        );
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setStatus("Terjadi kesalahan jaringan.");
+    }
+  };
+
   return (
     <div className="min-h-screen p-6 md:p-8">
       <div className="mx-auto w-full">
-        <Link href={'/'}>
-            <h1 className="border px-3 rounded w-fit mb-8">{'<'} Kembali</h1>
+        <Link href={"/"}>
+          <h1 className="border px-3 rounded w-fit mb-8">{"<"} Kembali</h1>
         </Link>
-        {/* <!-- Header --> */}
         <div className="mb-10">
           <h1 className="text-4xl font-bold mb-2">Pencapaian Operator</h1>
           <p className="text-slate-400 text-lg">
@@ -42,7 +75,6 @@ export default function PageSoalSatu() {
           </p>
         </div>
 
-        {/* <!-- Stats Summary --> */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
           <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
             <div className="text-slate-400 text-sm mb-1">Total Operator</div>
@@ -78,9 +110,8 @@ export default function PageSoalSatu() {
           </div>
         </div>
 
-        {/* <!-- Operators Table --> */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <div className="max-w-5xl lg:w-5xl bg-slate-800 rounded-lg border border-slate-700 p-6">
+          <div className="max-w-5xl lg:w-4xl bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h1 className="text-xl font-bold mb-4 text-white">
               Grafik Pencapaian Operator
             </h1>
@@ -110,6 +141,9 @@ export default function PageSoalSatu() {
                     </th>
                     <th className="px-6 py-4 text-right text-white font-semibold">
                       Pencapaian
+                    </th>
+                    <th className="px-6 py-4 text-center text-white font-semibold">
+                      Aksi
                     </th>
                   </tr>
                 </thead>
@@ -158,6 +192,21 @@ export default function PageSoalSatu() {
                         >
                           {operator.percentage}%
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {operator.percentage <= 50 ? (
+                          <Button
+                            size={"sm"}
+                            variant={"outline"}
+                            disabled={status === "Mengirim..."}
+                            onClick={() => handleSendEmail(operator.name)}
+                            className="mr-4"
+                          >
+                            {status === "Mengirim..."
+                              ? "Sending..."
+                              : "Send Email"}
+                          </Button>
+                        ) : null}
                       </td>
                     </tr>
                   ))}

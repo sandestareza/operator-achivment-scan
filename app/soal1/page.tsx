@@ -8,12 +8,13 @@ import { useState } from "react";
 
 export default function PageSoalSatu() {
   const [status, setStatus] = useState("");
-  const sortedOperators = operators
+
+  const [sortedOperators, setSortedOperators] = useState(operators
     .map((op) => ({
       ...op,
       percentage: Math.round((op.output / op.target) * 100),
     }))
-    .sort((a, b) => b.percentage - a.percentage);
+    .sort((a, b) => b.percentage - a.percentage));
 
   function getStatusColor(percentage: number): string {
     if (percentage >= 100) return "text-green-600 dark:text-green-400";
@@ -33,9 +34,9 @@ export default function PageSoalSatu() {
     return num.toLocaleString("id-ID");
   }
 
-  const handleSendEmail = async (name: string) => {
+  const handleSendEmail = async (name: string, sendEmail: boolean) => {
     setStatus("Mengirim...");
-
+    setSortedOperators(prev => prev.map(op => op.name === name ? {...op, sendEmail} : op));
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
@@ -58,6 +59,9 @@ export default function PageSoalSatu() {
     } catch (error) {
       console.error("Fetch error:", error);
       setStatus("Terjadi kesalahan jaringan.");
+    } finally {
+      setStatus("");
+      setSortedOperators(prev => prev.map(op => op.name === name ? {...op, sendEmail: false} : op));
     }
   };
 
@@ -199,10 +203,10 @@ export default function PageSoalSatu() {
                             size={"sm"}
                             variant={"outline"}
                             disabled={status === "Mengirim..."}
-                            onClick={() => handleSendEmail(operator.name)}
+                            onClick={() => handleSendEmail(operator.name, true)}
                             className="mr-4"
                           >
-                            {status === "Mengirim..."
+                            {status === "Mengirim..." && operator.sendEmail
                               ? "Sending..."
                               : "Send Email"}
                           </Button>
